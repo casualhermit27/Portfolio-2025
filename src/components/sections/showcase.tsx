@@ -55,7 +55,7 @@ const showcaseItems = [
 export function ShowcaseSection({ className }: ShowcaseSectionProps) {
   return (
     <section className={cn("py-32 font-sans", className)}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-consistent">
         {/* Section Header */}
         <div className="text-center mb-24">
           <h2 className="text-5xl md:text-6xl font-light text-black dark:text-white mb-8">

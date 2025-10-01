@@ -13,7 +13,7 @@ interface ContactSectionProps {
 export function ContactSection({ className }: ContactSectionProps) {
   return (
     <section className={cn("py-32 font-sans", className)}>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container-consistent">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
           {/* Left Side - Contact Info */}
           <div className="space-y-16">

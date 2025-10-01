@@ -22,16 +22,22 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
     "Doze",
     "Eevolution",
     "Aimee",
-    "Spotly"
+    "Spotly",
+    "ACME Health Landing",
+    "Eevolution Landing", 
+    "Spotly Landing"
   ]
 
   const projectImages = [
-    "/landings/hero insightx AI.png", // Card 1 - Landing
-    "/logos/acme health logo.png",    // Card 2 - Logo (square)
-    "/landings/hero_doze.png",        // Card 3 - Landing
-    "/logos/Eevolution logo.png",     // Card 4 - Logo (square)
-    "/landings/hero_aimee.png",       // Card 5 - Landing
-    "/logos/spotly logo.png"          // Card 6 - Logo (square)
+    "/landings/insightx_hero.png",    // Card 1 - Landing
+    "/logos/acme health logo.png",    // Card 2 - Logo (1:1)
+    "/landings/doze_hero.png",        // Card 3 - Landing
+    "/logos/Eevolution logo.png",     // Card 4 - Logo (1:1)
+    "/landings/aimee_hero.png",       // Card 5 - Landing
+    "/logos/spotly logo.png",         // Card 6 - Logo (1:1)
+    "/landings/acme_hero.png",        // Card 7 - Landing
+    "/landings/eevolution_hero.png",  // Card 8 - Landing
+    "/landings/spotly_hero.png"       // Card 9 - Landing
   ]
 
   const handleCardClick = (cardIndex: number) => {
@@ -71,7 +77,7 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
       >
         {/* Centered Header */}
         <div className="flex items-center justify-center min-h-screen -mt-16">
-        <div className="container mx-auto px-2 sm:px-4 lg:px-6">
+        <div className="container-full">
           <div className="text-left">
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-light text-black dark:text-white leading-tight w-full">
                   Hey, I&apos;m <span className="harsha-pill">Harsha</span> — an <em className="italic-glow">Engineer + Designer</em> focused on building sharp frontends
@@ -83,29 +89,30 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
       </div>
 
       {/* Bento Cards - Positioned below hero */}
-      <div className="container mx-auto px-2 sm:px-4 lg:px-6 -mt-32">
+      <div className="w-full -mt-32">
         <div 
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
           onMouseLeave={handleMouseLeave}
         >
           {/* First Row - 1 Long Card on Left */}
-              <div className="md:col-span-2 lg:col-span-2 relative group">
-                <div 
-                  className={cn(
-                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] transition-all duration-300 cursor-pointer overflow-hidden relative",
-                    hoveredCard === null || hoveredCard === 1 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-                  )}
+              <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
+                  <div 
+                    className={cn(
+                      "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
+                      hoveredCard === null || hoveredCard === 1 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
+                    )}
                   onMouseEnter={() => handleCardHover(1)}
                   onMouseLeave={handleMouseLeave}
                   onClick={() => handleCardClick(1)}
                 >
                   {/* Landing Page Image */}
-                  <div className="relative w-full h-full">
+                  <div className="relative w-full image-container landing-page-container">
                     <Image
                       src={projectImages[0]}
                       alt={projectNames[0]}
-                      fill
-                      className="object-cover"
+                      width={2400}
+                      height={1200}
+                      className="w-full h-auto object-contain"
                       priority
                     />
                   </div>
@@ -156,10 +163,10 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
           
           {/* Second Row - 1 Card in Center */}
           <div className="md:col-span-1 lg:col-span-1"></div>
-              <div className="md:col-span-1 lg:col-span-1 relative group">
+              <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
                 <div 
                   className={cn(
-                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative",
+                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
                     hoveredCard === null || hoveredCard === 2 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
                   )}
                   onMouseEnter={() => handleCardHover(2)}
@@ -167,12 +174,12 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
                   onClick={() => handleCardClick(2)}
                 >
                   {/* Logo Image - Fills Square Container */}
-                  <div className="relative w-full h-full">
+                  <div className="relative w-full h-full image-container logo-container">
                     <Image
                       src={projectImages[1]}
                       alt={projectNames[1]}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                     />
                   </div>
                   
@@ -221,7 +228,7 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
           </div>
           
           {/* Third Row - 1 Long Card on Right */}
-          <div className="md:col-span-1 lg:col-span-1 relative group">
+          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
             {/* Arrow sentence for card 3 - appears on left side - Desktop only */}
             {(hoveredCard === 3 || hoveredText === 3 || hoveredProject === 3) && (
               <div 
@@ -252,25 +259,26 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               </div>
             )}
           </div>
-              <div className="md:col-span-2 lg:col-span-2 relative group">
+              <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
                 <div 
                   className={cn(
-                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-96 md:h-[28rem] lg:h-[32rem] transition-all duration-300 cursor-pointer overflow-hidden relative",
+                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
                     hoveredCard === null || hoveredCard === 3 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
                   )}
                   onMouseEnter={() => handleCardHover(3)}
                   onMouseLeave={handleMouseLeave}
                   onClick={() => handleCardClick(3)}
                 >
-                  {/* Landing Page Image */}
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={projectImages[2]}
-                      alt={projectNames[2]}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
+              {/* Landing Page Image */}
+              <div className="relative w-full image-container landing-page-container">
+                <Image
+                  src={projectImages[2]}
+                  alt={projectNames[2]}
+                  width={2400}
+                  height={1200}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
                   
                   {/* Mobile Click Me Button - Top Left */}
                   <button 
@@ -286,7 +294,7 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               </div>
           
           {/* Fourth Row - Eevolution on Complete Left */}
-          <div className="md:col-span-1 lg:col-span-1 relative group">
+          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
             <div 
               className={cn(
                 "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative",
@@ -297,12 +305,12 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               onClick={() => handleCardClick(4)}
             >
               {/* Logo Image - Fills Square Container */}
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full image-container logo-container">
                 <Image
                   src={projectImages[3]}
                   alt={projectNames[3]}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               
@@ -352,7 +360,7 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
           <div className="md:col-span-1 lg:col-span-1"></div>
           
           {/* Fifth Row - Aimee on Complete Right */}
-          <div className="md:col-span-1 lg:col-span-1 relative group">
+          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
             {/* Arrow sentence for card 5 - appears on left side - Desktop only */}
             {(hoveredCard === 5 || hoveredText === 5 || hoveredProject === 5) && (
               <div 
@@ -383,10 +391,10 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               </div>
             )}
           </div>
-          <div className="md:col-span-2 lg:col-span-2 relative group">
+          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
             <div 
               className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] transition-all duration-300 cursor-pointer overflow-hidden relative",
+                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
                 hoveredCard === null || hoveredCard === 5 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
               )}
               onMouseEnter={() => handleCardHover(5)}
@@ -394,12 +402,13 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               onClick={() => handleCardClick(5)}
             >
               {/* Landing Page Image */}
-              <div className="relative w-full h-full">
+              <div className="relative w-full image-container landing-page-container">
                 <Image
                   src={projectImages[4]}
                   alt={projectNames[4]}
-                  fill
-                  className="object-cover"
+                  width={2400}
+                  height={1200}
+                  className="w-full h-auto object-contain"
                 />
               </div>
               
@@ -417,7 +426,7 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
           </div>
           
           {/* Sixth Row - Spotly on Complete Right */}
-          <div className="md:col-span-1 lg:col-span-1 relative group">
+          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
             {/* Arrow sentence for card 6 - appears on left side - Desktop only */}
             {(hoveredCard === 6 || hoveredText === 6 || hoveredProject === 6) && (
               <div 
@@ -449,7 +458,7 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
             )}
           </div>
           <div className="md:col-span-1 lg:col-span-1"></div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
+          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
             <div 
               className={cn(
                 "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative",
@@ -460,12 +469,12 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               onClick={() => handleCardClick(6)}
             >
               {/* Logo Image - Fills Square Container */}
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full image-container logo-container">
                 <Image
                   src={projectImages[5]}
                   alt={projectNames[5]}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
               
@@ -481,6 +490,207 @@ export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSecti
               </button>
             </div>
           </div>
+          
+          {/* Seventh Row - ACME Health Landing on Left */}
+          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
+            <div 
+              className={cn(
+                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
+                hoveredCard === null || hoveredCard === 7 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
+              )}
+              onMouseEnter={() => handleCardHover(7)}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleCardClick(7)}
+            >
+              {/* Landing Page Image */}
+              <div className="relative w-full image-container landing-page-container">
+                <Image
+                  src={projectImages[6]}
+                  alt={projectNames[6]}
+                  width={2400}
+                  height={1200}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+              
+              {/* Mobile Click Me Button - Top Left */}
+              <button 
+                className="click-me-button click-me-1 click-me-top-left md:hidden"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleCardClick(7)
+                }}
+              >
+                Click me
+              </button>
+            </div>
+          </div>
+          <div className="md:col-span-1 lg:col-span-1 relative group">
+            {/* Arrow sentence for card 7 - appears on right side - Desktop only */}
+            {(hoveredCard === 7 || hoveredText === 7 || hoveredProject === 7) && (
+              <div 
+                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
+                onMouseEnter={() => handleTextHover(7)}
+                onMouseLeave={() => setHoveredText(null)}
+              >
+                <div className="flex flex-col items-center text-center">
+                <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(7)}>
+                  <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
+                </div>
+                <div 
+                  className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
+                  onMouseEnter={() => handleProjectHover(7)}
+                  onMouseLeave={() => setHoveredProject(null)}
+                  onClick={() => handleCardClick(7)}
+                >
+                  {hoveredProject === 7 ? (
+                    <div className="flex items-center space-x-2">
+                      <span>{projectNames[6]}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  ) : (
+                    <span>{projectNames[6]}</span>
+                  )}
+                </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="md:col-span-1 lg:col-span-1"></div>
+          
+          {/* Eighth Row - Eevolution Landing on Right */}
+          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
+            <div 
+              className={cn(
+                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
+                hoveredCard === null || hoveredCard === 8 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
+              )}
+              onMouseEnter={() => handleCardHover(8)}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleCardClick(8)}
+            >
+              {/* Landing Page Image */}
+              <div className="relative w-full image-container landing-page-container">
+                <Image
+                  src={projectImages[7]}
+                  alt={projectNames[7]}
+                  width={2400}
+                  height={1200}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+              
+              {/* Mobile Click Me Button - Top Left */}
+              <button 
+                className="click-me-button click-me-1 click-me-top-left md:hidden"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleCardClick(8)
+                }}
+              >
+                Click me
+              </button>
+            </div>
+          </div>
+          <div className="md:col-span-1 lg:col-span-1 relative group">
+            {/* Arrow sentence for card 8 - appears on right side - Desktop only */}
+            {(hoveredCard === 8 || hoveredText === 8 || hoveredProject === 8) && (
+              <div 
+                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
+                onMouseEnter={() => handleTextHover(8)}
+                onMouseLeave={() => setHoveredText(null)}
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(8)}>
+                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
+                  </div>
+                  <div 
+                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
+                    onMouseEnter={() => handleProjectHover(8)}
+                    onMouseLeave={() => setHoveredProject(null)}
+                    onClick={() => handleCardClick(8)}
+                  >
+                    {hoveredProject === 8 ? (
+                      <div className="flex items-center space-x-2">
+                        <span>{projectNames[7]}</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    ) : (
+                      <span>{projectNames[7]}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="md:col-span-1 lg:col-span-1"></div>
+          
+          {/* Ninth Row - Spotly Landing on Left */}
+          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
+            <div 
+              className={cn(
+                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
+                hoveredCard === null || hoveredCard === 9 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
+              )}
+              onMouseEnter={() => handleCardHover(9)}
+              onMouseLeave={handleMouseLeave}
+              onClick={() => handleCardClick(9)}
+            >
+              {/* Landing Page Image */}
+              <div className="relative w-full image-container landing-page-container">
+                <Image
+                  src={projectImages[8]}
+                  alt={projectNames[8]}
+                  width={2400}
+                  height={1200}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+              
+              {/* Mobile Click Me Button - Top Left */}
+              <button 
+                className="click-me-button click-me-1 click-me-top-left md:hidden"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleCardClick(9)
+                }}
+              >
+                Click me
+              </button>
+            </div>
+          </div>
+          <div className="md:col-span-1 lg:col-span-1 relative group">
+            {/* Arrow sentence for card 9 - appears on right side - Desktop only */}
+            {(hoveredCard === 9 || hoveredText === 9 || hoveredProject === 9) && (
+              <div 
+                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
+                onMouseEnter={() => handleTextHover(9)}
+                onMouseLeave={() => setHoveredText(null)}
+              >
+                <div className="flex flex-col items-center text-center">
+                <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(9)}>
+                  <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
+                </div>
+                <div 
+                  className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
+                  onMouseEnter={() => handleProjectHover(9)}
+                  onMouseLeave={() => setHoveredProject(null)}
+                  onClick={() => handleCardClick(9)}
+                >
+                  {hoveredProject === 9 ? (
+                    <div className="flex items-center space-x-2">
+                      <span>{projectNames[8]}</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
+                  ) : (
+                    <span>{projectNames[8]}</span>
+                  )}
+                </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="md:col-span-1 lg:col-span-1"></div>
         </div>
       </div>
       </div>

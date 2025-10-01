@@ -850,4 +850,190 @@
   border-color: rgba(71, 85, 105, 0.4);
 }
 
+/* Consistent Container System */
+.container-consistent {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-consistent {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-consistent {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-consistent {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+/* Full-width container for hero sections */
+.container-full {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-full {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-full {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-full {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-full {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+/* Consistent Card Heights for Different Screen Sizes - 2x1 cards = 2 square cards height */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .card-height-consistent {
+    height: 64rem; /* 1024px - 2x square card height (32rem each) */
+  }
+}
+
+@media (min-width: 1280px) and (max-width: 1535px) {
+  .card-height-consistent {
+    height: 72rem; /* 1152px - 2x square card height (36rem each) */
+  }
+}
+
+@media (min-width: 1536px) {
+  .card-height-consistent {
+    height: 80rem; /* 1280px - 2x square card height (40rem each) */
+  }
+}
+
+/* Ensure cards maintain aspect ratio on very wide screens */
+@media (min-width: 1920px) {
+  .card-height-consistent {
+    height: 88rem; /* 1408px - 2x square card height (44rem each) */
+  }
+}
+
+/* Image container - fits image exactly */
+.image-container {
+  background: transparent; /* Remove grey background */
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: auto; /* Container height matches image exactly */
+  display: block;
+}
+
+.dark .image-container {
+  background: transparent; /* Remove grey background in dark mode too */
+}
+
+.image-container img {
+  width: 100%;
+  height: auto; /* Image determines its own height */
+  object-fit: contain; /* Show full image without cropping */
+  object-position: center;
+  position: relative;
+  display: block; /* Remove any inline spacing */
+}
+
+/* Force complete fill on all screen sizes */
+@media (max-width: 640px) {
+  .image-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .image-container img {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100%;
+    min-height: 100%;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .image-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .image-container img {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100%;
+    min-height: 100%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .image-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .image-container img {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100%;
+    min-height: 100%;
+  }
+}
+
+/* Container adapts exactly to image dimensions */
+.landing-page-container {
+  width: 100%;
+  height: auto; /* Container height matches image height exactly */
+}
+
+.logo-container {
+  aspect-ratio: 1/1; /* Square for logos */
+  width: 100%;
+}
+
+/* Next.js Image component styling */
+.image-container > div {
+  width: 100% !important;
+  height: auto !important;
+  position: relative !important;
+  display: block !important;
+}
+
+.image-container > div > img {
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  position: relative !important;
+}
+
 
