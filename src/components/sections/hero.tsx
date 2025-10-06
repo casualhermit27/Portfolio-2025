@@ -1,700 +1,420 @@
 "use client"
 
 import { cn } from "@/lib/cn"
-import { ArrowRight } from "lucide-react"
-import { useState } from "react"
-import Image from "next/image"
+import Link from "next/link"
+import { useState, useEffect, useRef } from "react"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
+import { gsap } from "gsap"
 
 interface HeroSectionProps {
   className?: string
-  onOpenSidebar: (projectIndex: number) => void
-  sidebarOpen: boolean
 }
 
-export function HeroSection({ className, onOpenSidebar, sidebarOpen }: HeroSectionProps) {
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null)
-  const [hoveredText, setHoveredText] = useState<number | null>(null)
-  const [hoveredProject, setHoveredProject] = useState<number | null>(null)
+export function HeroSection({ className }: HeroSectionProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [showAboutPopup, setShowAboutPopup] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isIntroDone, setIsIntroDone] = useState(false)
+  const [showName, setShowName] = useState(false)
+  const popupRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
 
-  const projectNames = [
-    "InsightX AI",
-    "ACME Health", 
-    "Doze",
-    "Eevolution",
-    "Aimee",
-    "Spotly",
-    "ACME Health Landing",
-    "Eevolution Landing", 
-    "Spotly Landing"
-  ]
-
-  const projectImages = [
-    "/landings/insightx_hero.png",    // Card 1 - Landing
-    "/logos/acme health logo.png",    // Card 2 - Logo (1:1)
-    "/landings/doze_hero.png",        // Card 3 - Landing
-    "/logos/Eevolution logo.png",     // Card 4 - Logo (1:1)
-    "/landings/aimee_hero.png",       // Card 5 - Landing
-    "/logos/spotly logo.png",         // Card 6 - Logo (1:1)
-    "/landings/acme_hero.png",        // Card 7 - Landing
-    "/landings/eevolution_hero.png",  // Card 8 - Landing
-    "/landings/spotly_hero.png"       // Card 9 - Landing
-  ]
-
-  const handleCardClick = (cardIndex: number) => {
-    onOpenSidebar(cardIndex - 1) // Convert to 0-based index
+  
+  const originalText = "Get in Touch"
+  const randomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"
+  
+  const getRandomChar = () => {
+    return randomChars[Math.floor(Math.random() * randomChars.length)]
   }
 
-  const handleCardHover = (cardIndex: number) => {
-    setHoveredCard(cardIndex)
-    setHoveredText(null) // Clear text hover when card is hovered
-    setHoveredProject(null) // Clear project hover when card is hovered
+  // Loading animation
+  useEffect(() => {
+    const nameTimer = setTimeout(() => setShowName(true), 100) // 0.1s for name to appear
+    const timer = setTimeout(() => setIsIntroDone(true), 2000) // 2s delay for text expansion
+    const fullTimer = setTimeout(() => setIsLoading(false), 2500) // 2.5s for other elements
+    return () => {
+      clearTimeout(nameTimer)
+      clearTimeout(timer)
+      clearTimeout(fullTimer)
+    }
+  }, [])
+
+  // GSAP animations for popup
+  useEffect(() => {
+    if (showAboutPopup && popupRef.current && backdropRef.current) {
+      // Set initial state
+      gsap.set(popupRef.current, { 
+        scale: 0.8, 
+        opacity: 0, 
+        y: 20 
+      })
+      gsap.set(backdropRef.current, { 
+        opacity: 0 
+      })
+
+      // Animate in
+      gsap.to(backdropRef.current, {
+        opacity: 1,
+        duration: 0.3,
+        ease: "power2.out"
+      })
+
+      gsap.to(popupRef.current, {
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        duration: 0.4,
+        ease: "back.out(1.7)"
+      })
+    }
+  }, [showAboutPopup])
+
+  const closePopup = () => {
+    if (popupRef.current && backdropRef.current) {
+      // Hide backdrop immediately
+      gsap.to(backdropRef.current, {
+        opacity: 0,
+        duration: 0.1,
+        ease: "power2.out"
+      })
+
+      // Animate popup out
+      gsap.to(popupRef.current, {
+        scale: 0.8,
+        opacity: 0,
+        y: 20,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          setShowAboutPopup(false)
+        }
+      })
+    }
   }
 
-  const handleTextHover = (cardIndex: number) => {
-    setHoveredText(cardIndex)
-    setHoveredCard(cardIndex) // Keep card hovered when text is hovered
+  
+  const handleMouseEnter = () => {
+    const randomIndex = Math.floor(Math.random() * originalText.length)
+    setHoveredIndex(randomIndex)
   }
-
-  const handleProjectHover = (cardIndex: number) => {
-    setHoveredProject(cardIndex)
-    setHoveredCard(cardIndex) // Keep card hovered when project is hovered
-  }
-
+  
   const handleMouseLeave = () => {
-    setHoveredCard(null)
-    setHoveredText(null)
-    setHoveredProject(null)
+    setHoveredIndex(null)
   }
+  
+  const renderText = () => {
+    return originalText.split('').map((char, index) => (
+      <span
+        key={index}
+        className="transition-all duration-150"
+        style={{
+          color: hoveredIndex === index ? '#ff6b6b' : 'inherit'
+        }}
+      >
+        {hoveredIndex === index ? getRandomChar() : char}
+      </span>
+    ))
+  }
+
 
   return (
-    <section className={cn("min-h-screen font-sans", className)}>
-      {/* Main content with subtle push effect */}
-      <div 
-        className={cn(
-          "transition-all duration-500 ease-out",
-          sidebarOpen ? "transform -translate-x-4 scale-[0.98] opacity-90" : "transform translate-x-0 scale-100 opacity-100"
-        )}
-      >
-        {/* Centered Header */}
-        <div className="flex items-center justify-center min-h-screen -mt-16">
-        <div className="container-full">
-          <div className="text-left">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl font-light text-black dark:text-white leading-tight w-full">
-                  Hey, I&apos;m <span className="harsha-pill">Harsha</span> — an <em className="italic-glow">Engineer + Designer</em> focused on building sharp frontends
-                  <br className="mb-2" />
-                  and <em className="italic-glow">AI-powered tools</em> with speed, <em className="italic-glow">UX clarity</em>, and pixel-perfect execution.
-                </h1>
-          </div>
+     <section className={cn("min-h-screen font-sans flex items-center justify-center relative px-4 py-8 scroll-smooth", className)}>
+      {/* Top Left - Code Snippet */}
+      <div className={`absolute top-4 left-4 md:top-8 md:left-8 z-30 group transition-all duration-1000 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+        <div className="text-xs md:text-sm text-gray-500 dark:text-stone-300 font-mono cursor-pointer">
+          <div>const a=[];const b=!a;</div>
+          <div>console.log(a==b); // true <span className="text-lg md:text-2xl">🤯</span></div>
+        </div>
+
+        {/* Hover Tooltip - Desktop Only */}
+        <div className="hidden md:block absolute top-full left-0 mt-2 text-xs text-gray-400 dark:text-stone-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+          "Empty array equals 'not empty array'? JS converts both to 0 — mind blown! 🤯"
         </div>
       </div>
 
-      {/* Bento Cards - Positioned below hero */}
-      <div className="w-full -mt-32">
-        <div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"
-          onMouseLeave={handleMouseLeave}
+      {/* Top Right Controls - Always Sticky */}
+      <div className={`fixed top-4 right-4 md:top-8 md:right-8 z-30 flex items-center gap-2 md:gap-3 transition-all duration-1000 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+         <Link
+           href="#contact"
+          className="text-sm md:text-base font-medium text-muted-foreground dark:text-stone-300 hover:text-foreground dark:hover:text-stone-100 transition-colors duration-200 border-2 border-dotted border-gray-400 hover:border-gray-600 px-3 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl hover:bg-muted/50"
+           onMouseEnter={handleMouseEnter}
+           onMouseLeave={handleMouseLeave}
+         >
+           {renderText()}
+         </Link>
+         <ThemeToggle />
+       </div>
+
+       {/* Bottom Left - About&more Button */}
+       <div className={`absolute bottom-4 left-4 md:bottom-8 md:left-8 z-30 transition-all duration-1000 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+         <button 
+           onClick={() => setShowAboutPopup(!showAboutPopup)}
+           className="text-2xl md:text-4xl font-light text-gray-500 dark:text-stone-300 hover:text-gray-700 dark:hover:text-stone-100 transition-colors duration-200 cursor-pointer"
+         >
+           About&more
+         </button>
+       </div>
+
+          {/* Glassmorphic About Popup */}
+          {showAboutPopup && (
+            <>
+              {/* Backdrop */}
+              <div 
+                ref={backdropRef}
+                className="fixed inset-0 bg-black/10 z-40"
+                onClick={closePopup}
+              />
+              
+              <div className="absolute bottom-16 left-4 right-4 md:bottom-20 md:left-8 md:right-auto z-50">
+              <div 
+                ref={popupRef}
+                className="bg-stone-50/60 dark:bg-stone-900/15 border border-stone-300/60 dark:border-stone-600/50 rounded-2xl p-4 md:p-6 w-full md:max-w-md md:w-96 relative"
+              >
+                {/* Close Button */}
+                <button
+                  onClick={closePopup}
+                  className="absolute top-4 right-4 text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors duration-200"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                
+                <h2 className="text-xl md:text-2xl font-light text-stone-700 dark:text-stone-200 mb-4 pr-8">
+                  Designing and Developing
+                </h2>
+                
+                <div className="space-y-4">
+                  {/* Skills Grid */}
+                  <div className="space-y-2">
+                    {/* First row - 4 items on desktop, 2 on mobile */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div className="border border-stone-400/60 dark:border-stone-500/50 rounded-lg p-2 text-center bg-stone-50/30 dark:bg-stone-900/8">
+                        <span className="text-xs text-stone-600 dark:text-stone-300">websites</span>
+                      </div>
+                      <div className="border border-stone-400/60 dark:border-stone-500/50 rounded-lg p-2 text-center bg-stone-50/30 dark:bg-stone-900/8">
+                        <span className="text-xs text-stone-600 dark:text-stone-300">logos</span>
+                      </div>
+                      <div className="border border-stone-400/60 dark:border-stone-500/50 rounded-lg p-2 text-center bg-stone-50/30 dark:bg-stone-900/8">
+                        <span className="text-xs text-stone-600 dark:text-stone-300">Landings</span>
+                      </div>
+                      <div className="border border-stone-400/60 dark:border-stone-500/50 rounded-lg p-2 text-center bg-stone-50/30 dark:bg-stone-900/8">
+                        <span className="text-xs text-stone-600 dark:text-stone-300">SaaS</span>
+                      </div>
+                    </div>
+                    
+                    {/* Second row - 2 items */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="border border-stone-400/60 dark:border-stone-500/50 rounded-lg p-2 text-center bg-stone-50/30 dark:bg-stone-900/8">
+                        <span className="text-xs text-stone-600 dark:text-stone-300">Automation</span>
+                      </div>
+                      <div className="border border-stone-400/60 dark:border-stone-500/50 rounded-lg p-2 text-center bg-stone-50/30 dark:bg-stone-900/8">
+                        <span className="text-xs text-stone-600 dark:text-stone-300">AI interfaces</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Brand Work Section */}
+                  <div className="border-t border-stone-300/40 dark:border-stone-600/40 pt-4">
+                    <h3 className="text-sm font-medium text-stone-600 dark:text-stone-300 mb-3">
+                      Logos
+                    </h3>
+                    <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                      <div className="flex-shrink-0 w-24 h-24 bg-white dark:bg-gray-800/30 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden">
+                        <img
+                          src="/logos/Eevolution logo.png"
+                          alt="Eevolution"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 w-24 h-24 bg-white dark:bg-gray-800/30 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden">
+                        <img
+                          src="/logos/acme health logo.png"
+                          alt="Acme Health"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="flex-shrink-0 w-24 h-24 bg-white dark:bg-gray-800/30 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden">
+                        <img
+                          src="/logos/spotly logo.png"
+                          alt="Spotly"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </>
+          )}
+
+      {/* Bottom Right - View Work Button */}
+      <div className={`absolute bottom-4 right-4 md:bottom-8 md:right-8 z-30 transition-all duration-1000 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+        <button 
+          onClick={(e) => {
+            // Add zap effect with null check
+            if (e.currentTarget) {
+              e.currentTarget.classList.add('zap-effect');
+              setTimeout(() => {
+                if (e.currentTarget) {
+                  e.currentTarget.classList.remove('zap-effect');
+                }
+              }, 300);
+            }
+            
+            const workSection = document.getElementById('work-section');
+            if (workSection) {
+              // Add zap-like delay for more dramatic scroll
+              setTimeout(() => {
+                workSection.scrollIntoView({ 
+                  behavior: 'smooth',
+                  block: 'start',
+                  inline: 'nearest'
+                });
+              }, 400);
+            }
+          }}
+          className="border-2 border-gray-300 dark:border-stone-400 rounded-full px-4 py-2 md:px-6 md:py-3 flex items-center gap-2 md:gap-3 text-sm md:text-lg text-gray-500 dark:text-stone-300 min-w-[100px] md:min-w-[140px] hover:border-gray-400 dark:hover:border-stone-300 transition-all duration-200 hover:scale-110 active:scale-95"
         >
-          {/* First Row - 1 Long Card on Left */}
-              <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
-                  <div 
-                    className={cn(
-                      "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                      hoveredCard === null || hoveredCard === 1 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-                    )}
-                  onMouseEnter={() => handleCardHover(1)}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() => handleCardClick(1)}
-                >
-                  {/* Landing Page Image */}
-                  <div className="relative w-full image-container landing-page-container">
-                    <Image
-                      src={projectImages[0]}
-                      alt={projectNames[0]}
-                      width={2400}
-                      height={1200}
-                      className="w-full h-auto object-contain"
-                      priority
-                    />
-                  </div>
-                  
-                  {/* Mobile Click Me Button - Top Left */}
-                  <button 
-                    className="click-me-button click-me-1 click-me-top-left md:hidden"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleCardClick(1)
-                    }}
-                  >
-                    Click me
-                  </button>
-                </div>
-              </div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
-            {/* Arrow sentence for card 1 - appears on right side - Desktop only */}
-            {(hoveredCard === 1 || hoveredText === 1 || hoveredProject === 1) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(1)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-start">
-                <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(1)}>
-                  <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                </div>
-                <div 
-                  className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                  onMouseEnter={() => handleProjectHover(1)}
-                  onMouseLeave={() => setHoveredProject(null)}
-                  onClick={() => handleCardClick(1)}
-                >
-                  {hoveredProject === 1 ? (
-                    <div className="flex items-center space-x-2">
-                      <span>{projectNames[0]}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  ) : (
-                    <span>{projectNames[0]}</span>
-                  )}
-                </div>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Second Row - 1 Card in Center */}
-          <div className="md:col-span-1 lg:col-span-1"></div>
-              <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
-                <div 
-                  className={cn(
-                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                    hoveredCard === null || hoveredCard === 2 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-                  )}
-                  onMouseEnter={() => handleCardHover(2)}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() => handleCardClick(2)}
-                >
-                  {/* Logo Image - Fills Square Container */}
-                  <div className="relative w-full h-full image-container logo-container">
-                    <Image
-                      src={projectImages[1]}
-                      alt={projectNames[1]}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  
-                  {/* Mobile Click Me Button - Bottom Right */}
-                  <button 
-                    className="click-me-button click-me-2 click-me-bottom-right md:hidden"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleCardClick(2)
-                    }}
-                  >
-                    Click me
-                  </button>
-                </div>
-              </div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
-            {/* Arrow sentence for card 2 - appears on right side - Desktop only */}
-            {(hoveredCard === 2 || hoveredText === 2 || hoveredProject === 2) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(2)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-start">
-                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(2)}>
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                  </div>
-                  <div 
-                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                    onMouseEnter={() => handleProjectHover(2)}
-                    onMouseLeave={() => setHoveredProject(null)}
-                    onClick={() => handleCardClick(2)}
-                  >
-                    {hoveredProject === 2 ? (
-                      <div className="flex items-center space-x-2">
-                        <span>{projectNames[1]}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <span>{projectNames[1]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Third Row - 1 Long Card on Right */}
-          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
-            {/* Arrow sentence for card 3 - appears on left side - Desktop only */}
-            {(hoveredCard === 3 || hoveredText === 3 || hoveredProject === 3) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(3)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-start">
-                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(3)}>
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                  </div>
-                  <div 
-                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                    onMouseEnter={() => handleProjectHover(3)}
-                    onMouseLeave={() => setHoveredProject(null)}
-                    onClick={() => handleCardClick(3)}
-                  >
-                    {hoveredProject === 3 ? (
-                      <div className="flex items-center space-x-2">
-                        <span>{projectNames[2]}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <span>{projectNames[2]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-              <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
-                <div 
-                  className={cn(
-                    "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                    hoveredCard === null || hoveredCard === 3 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-                  )}
-                  onMouseEnter={() => handleCardHover(3)}
-                  onMouseLeave={handleMouseLeave}
-                  onClick={() => handleCardClick(3)}
-                >
-              {/* Landing Page Image */}
-              <div className="relative w-full image-container landing-page-container">
-                <Image
-                  src={projectImages[2]}
-                  alt={projectNames[2]}
-                  width={2400}
-                  height={1200}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-                  
-                  {/* Mobile Click Me Button - Top Left */}
-                  <button 
-                    className="click-me-button click-me-3 click-me-top-left md:hidden"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleCardClick(3)
-                    }}
-                  >
-                    Click me
-                  </button>
-                </div>
-              </div>
-          
-          {/* Fourth Row - Eevolution on Complete Left */}
-          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
-            <div 
-              className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative",
-                hoveredCard === null || hoveredCard === 4 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-              )}
-              onMouseEnter={() => handleCardHover(4)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(4)}
-            >
-              {/* Logo Image - Fills Square Container */}
-              <div className="relative w-full h-full image-container logo-container">
-                <Image
-                  src={projectImages[3]}
-                  alt={projectNames[3]}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              
-              {/* Mobile Click Me Button - Bottom Right */}
-              <button 
-                className="click-me-button click-me-4 click-me-bottom-right md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCardClick(4)
-                }}
-              >
-                Click me
-              </button>
-            </div>
-          </div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
-            {/* Arrow sentence for card 4 - appears on right side - Desktop only */}
-            {(hoveredCard === 4 || hoveredText === 4 || hoveredProject === 4) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(4)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-start">
-                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(4)}>
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                  </div>
-                  <div 
-                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                    onMouseEnter={() => handleProjectHover(4)}
-                    onMouseLeave={() => setHoveredProject(null)}
-                    onClick={() => handleCardClick(4)}
-                  >
-                    {hoveredProject === 4 ? (
-                      <div className="flex items-center space-x-2">
-                        <span>{projectNames[3]}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <span>{projectNames[3]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-1 lg:col-span-1"></div>
-          
-          {/* Fifth Row - Aimee on Complete Right */}
-          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
-            {/* Arrow sentence for card 5 - appears on left side - Desktop only */}
-            {(hoveredCard === 5 || hoveredText === 5 || hoveredProject === 5) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(5)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-start">
-                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(5)}>
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                  </div>
-                  <div 
-                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                    onMouseEnter={() => handleProjectHover(5)}
-                    onMouseLeave={() => setHoveredProject(null)}
-                    onClick={() => handleCardClick(5)}
-                  >
-                    {hoveredProject === 5 ? (
-                      <div className="flex items-center space-x-2">
-                        <span>{projectNames[4]}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <span>{projectNames[4]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
-            <div 
-              className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                hoveredCard === null || hoveredCard === 5 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-              )}
-              onMouseEnter={() => handleCardHover(5)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(5)}
-            >
-              {/* Landing Page Image */}
-              <div className="relative w-full image-container landing-page-container">
-                <Image
-                  src={projectImages[4]}
-                  alt={projectNames[4]}
-                  width={2400}
-                  height={1200}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-              
-              {/* Mobile Click Me Button - Top Left */}
-              <button 
-                className="click-me-button click-me-5 click-me-top-left md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCardClick(5)
-                }}
-              >
-                Click me
-              </button>
-            </div>
-          </div>
-          
-          {/* Sixth Row - Spotly on Complete Right */}
-          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
-            {/* Arrow sentence for card 6 - appears on left side - Desktop only */}
-            {(hoveredCard === 6 || hoveredText === 6 || hoveredProject === 6) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(6)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-start">
-                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(6)}>
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                  </div>
-                  <div 
-                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                    onMouseEnter={() => handleProjectHover(6)}
-                    onMouseLeave={() => setHoveredProject(null)}
-                    onClick={() => handleCardClick(6)}
-                  >
-                    {hoveredProject === 6 ? (
-                      <div className="flex items-center space-x-2">
-                        <span>{projectNames[5]}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <span>{projectNames[5]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-1 lg:col-span-1"></div>
-          <div className="md:col-span-1 lg:col-span-1 relative group px-2 sm:px-3 lg:px-4">
-            <div 
-              className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg aspect-square transition-all duration-300 cursor-pointer overflow-hidden relative",
-                hoveredCard === null || hoveredCard === 6 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-              )}
-              onMouseEnter={() => handleCardHover(6)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(6)}
-            >
-              {/* Logo Image - Fills Square Container */}
-              <div className="relative w-full h-full image-container logo-container">
-                <Image
-                  src={projectImages[5]}
-                  alt={projectNames[5]}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              
-              {/* Mobile Click Me Button - Top Left */}
-              <button 
-                className="click-me-button click-me-6 click-me-top-left md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCardClick(6)
-                }}
-              >
-                Click me
-              </button>
-            </div>
-          </div>
-          
-          {/* Seventh Row - ACME Health Landing on Left */}
-          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
-            <div 
-              className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                hoveredCard === null || hoveredCard === 7 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-              )}
-              onMouseEnter={() => handleCardHover(7)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(7)}
-            >
-              {/* Landing Page Image */}
-              <div className="relative w-full image-container landing-page-container">
-                <Image
-                  src={projectImages[6]}
-                  alt={projectNames[6]}
-                  width={2400}
-                  height={1200}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-              
-              {/* Mobile Click Me Button - Top Left */}
-              <button 
-                className="click-me-button click-me-1 click-me-top-left md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCardClick(7)
-                }}
-              >
-                Click me
-              </button>
-            </div>
-          </div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
-            {/* Arrow sentence for card 7 - appears on right side - Desktop only */}
-            {(hoveredCard === 7 || hoveredText === 7 || hoveredProject === 7) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(7)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-center text-center">
-                <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(7)}>
-                  <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                </div>
-                <div 
-                  className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                  onMouseEnter={() => handleProjectHover(7)}
-                  onMouseLeave={() => setHoveredProject(null)}
-                  onClick={() => handleCardClick(7)}
-                >
-                  {hoveredProject === 7 ? (
-                    <div className="flex items-center space-x-2">
-                      <span>{projectNames[6]}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  ) : (
-                    <span>{projectNames[6]}</span>
-                  )}
-                </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-1 lg:col-span-1"></div>
-          
-          {/* Eighth Row - Eevolution Landing on Right */}
-          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
-            <div 
-              className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                hoveredCard === null || hoveredCard === 8 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-              )}
-              onMouseEnter={() => handleCardHover(8)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(8)}
-            >
-              {/* Landing Page Image */}
-              <div className="relative w-full image-container landing-page-container">
-                <Image
-                  src={projectImages[7]}
-                  alt={projectNames[7]}
-                  width={2400}
-                  height={1200}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-              
-              {/* Mobile Click Me Button - Top Left */}
-              <button 
-                className="click-me-button click-me-1 click-me-top-left md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCardClick(8)
-                }}
-              >
-                Click me
-              </button>
-            </div>
-          </div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
-            {/* Arrow sentence for card 8 - appears on right side - Desktop only */}
-            {(hoveredCard === 8 || hoveredText === 8 || hoveredProject === 8) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(8)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-center text-center">
-                  <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(8)}>
-                    <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                  </div>
-                  <div 
-                    className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                    onMouseEnter={() => handleProjectHover(8)}
-                    onMouseLeave={() => setHoveredProject(null)}
-                    onClick={() => handleCardClick(8)}
-                  >
-                    {hoveredProject === 8 ? (
-                      <div className="flex items-center space-x-2">
-                        <span>{projectNames[7]}</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </div>
-                    ) : (
-                      <span>{projectNames[7]}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-1 lg:col-span-1"></div>
-          
-          {/* Ninth Row - Spotly Landing on Left */}
-          <div className="md:col-span-2 lg:col-span-2 relative group px-2 sm:px-3 lg:px-4">
-            <div 
-              className={cn(
-                "bg-gray-100/80 dark:bg-gray-900/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-lg h-[32rem] md:h-[36rem] lg:h-[40rem] xl:h-[44rem] 2xl:h-[48rem] transition-all duration-300 cursor-pointer overflow-hidden relative p-0 m-0",
-                hoveredCard === null || hoveredCard === 9 ? "opacity-100 border-gray-300 dark:border-gray-600" : "opacity-30 blur-sm"
-              )}
-              onMouseEnter={() => handleCardHover(9)}
-              onMouseLeave={handleMouseLeave}
-              onClick={() => handleCardClick(9)}
-            >
-              {/* Landing Page Image */}
-              <div className="relative w-full image-container landing-page-container">
-                <Image
-                  src={projectImages[8]}
-                  alt={projectNames[8]}
-                  width={2400}
-                  height={1200}
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-              
-              {/* Mobile Click Me Button - Top Left */}
-              <button 
-                className="click-me-button click-me-1 click-me-top-left md:hidden"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleCardClick(9)
-                }}
-              >
-                Click me
-              </button>
-            </div>
-          </div>
-          <div className="md:col-span-1 lg:col-span-1 relative group">
-            {/* Arrow sentence for card 9 - appears on right side - Desktop only */}
-            {(hoveredCard === 9 || hoveredText === 9 || hoveredProject === 9) && (
-              <div 
-                className="absolute inset-0 flex flex-col items-center justify-center animate-fade-in hidden md:flex"
-                onMouseEnter={() => handleTextHover(9)}
-                onMouseLeave={() => setHoveredText(null)}
-              >
-                <div className="flex flex-col items-center text-center">
-                <div className="text-black dark:text-white cursor-pointer hover:scale-102 transition-all duration-300" onClick={() => handleCardClick(9)}>
-                  <span className="text-2xl md:text-3xl lg:text-4xl font-medium hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300">View Project Details</span>
-                </div>
-                <div 
-                  className="mt-2 text-gray-400 dark:text-gray-500 text-base md:text-lg lg:text-xl cursor-pointer hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-300"
-                  onMouseEnter={() => handleProjectHover(9)}
-                  onMouseLeave={() => setHoveredProject(null)}
-                  onClick={() => handleCardClick(9)}
-                >
-                  {hoveredProject === 9 ? (
-                    <div className="flex items-center space-x-2">
-                      <span>{projectNames[8]}</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </div>
-                  ) : (
-                    <span>{projectNames[8]}</span>
-                  )}
-                </div>
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="md:col-span-1 lg:col-span-1"></div>
-        </div>
-      </div>
+          <span>View Work</span>
+          <span>↗</span>
+        </button>
       </div>
 
+      <div className="text-center max-w-4xl px-4">
+        <h1
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-black dark:text-stone-100 leading-tight mb-8 md:mb-12 transition-all duration-700 ease-out"
+        >
+            <span className="inline-block">
+              <span className={`transition-all duration-500 ease-out ${showName ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                Hey, I&apos;m <span className="font-medium">Harsha</span>
+                <span className="inline-block ml-2 animate-wave">👋</span>
+              </span>
+              {!isIntroDone ? (
+                <span className="opacity-0"> — I design intelligence that thinks and experiences that feel human.</span>
+              ) : (
+                <span className="opacity-100 transition-opacity duration-700 ease-out">
+                  {" "}
+                  — I <span className="font-medium">design intelligence</span> that thinks and{" "}
+                  <span className="font-medium">experiences that feel</span> human.
+                </span>
+              )}
+            </span>
+         </h1>
+         
+        {/* Social and Work Pills - Animate in after heading */}
+        <div className={`flex flex-col sm:flex-row items-center justify-center gap-3 mb-12 md:mb-16 transition-all duration-1000 delay-300 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            <Link
+              href="https://x.com/yourusername"
+              target="_blank"
+              rel="noopener noreferrer"
+             className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 md:px-4 rounded-full text-xs md:text-sm font-medium hover:bg-black transition-all duration-200 hover:scale-105"
+            >
+             <svg className="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              X
+            </Link>
+            <Link
+              href="https://linkedin.com/in/yourusername"
+              target="_blank"
+              rel="noopener noreferrer"
+             className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 md:px-4 rounded-full text-xs md:text-sm font-medium hover:bg-blue-700 transition-all duration-200 hover:scale-105"
+            >
+             <svg className="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              LinkedIn
+            </Link>
+           <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 text-orange-700 px-3 py-2 md:px-4 rounded-full text-xs md:text-sm font-medium dark:bg-orange-900/20 dark:border-orange-800/40 dark:text-orange-200">
+             <svg className="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 24 24">
+               <path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0L19.2 12l-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/>
+              </svg>
+              Software Developer at Oracle
+            </div>
+         </div>
+       </div>
+
+      
+      <style jsx global>{`
+        html {
+          scroll-behavior: smooth;
+        }
+        
+        * {
+          scroll-behavior: smooth;
+        }
+        
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes wave {
+          0%, 100% {
+            transform: rotate(0deg);
+          }
+          10%, 30% {
+            transform: rotate(14deg);
+          }
+          20% {
+            transform: rotate(-8deg);
+          }
+          40% {
+            transform: rotate(14deg);
+          }
+          50% {
+            transform: rotate(-4deg);
+          }
+          60% {
+            transform: rotate(10deg);
+          }
+          70% {
+            transform: rotate(0deg);
+          }
+        }
+        
+        .animate-wave {
+          animation: wave 2.5s ease-in-out infinite;
+          transform-origin: 70% 70%;
+          display: inline-block;
+        }
+        
+        .zap-effect {
+          animation: zap 0.3s ease-out;
+        }
+        
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        
+        @keyframes zap {
+          0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+          }
+          100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+          }
+        }
+      `}</style>
     </section>
   )
 }

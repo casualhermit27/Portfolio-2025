@@ -1,66 +1,41 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
-import { navigation } from "@/constants/site"
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+    <header className="fixed top-1 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border border-border rounded-full mx-6">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-10">
           {/* Logo */}
-          <Link href="/" className="text-xl font-bold gradient-text font-sans">
+          <Link href="/" className="text-xs font-bold gradient-text font-sans">
             Portfolio
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-sans"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <nav className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-sans"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
+          {/* Center Buttons */}
+          <div className="flex items-center gap-1">
+            <Link
+              href="#landings"
+              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 font-sans px-2 py-1 rounded-full hover:bg-muted/50"
+            >
+              Landings
+            </Link>
+            <Link
+              href="#logos"
+              className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 font-sans px-2 py-1 rounded-full hover:bg-muted/50"
+            >
+              Logos
+            </Link>
           </div>
-        )}
+
+          {/* Get in Touch Button */}
+          <Link
+            href="#contact"
+            className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors duration-200 font-sans px-2 py-1 rounded-md hover:bg-muted/50"
+          >
+            Get in Touch
+          </Link>
+        </div>
       </div>
     </header>
   )

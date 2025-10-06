@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/contexts/theme-context";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -19,11 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${outfit.variable} font-sans antialiased`}
+        suppressHydrationWarning
       >
-        {children}
+        <ThemeProvider
+          defaultTheme="system"
+          storageKey="portfolio-theme"
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
