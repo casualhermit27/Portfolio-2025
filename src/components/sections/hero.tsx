@@ -387,7 +387,7 @@ export function HeroSection({ className }: HeroSectionProps) {
         {/* Social and Work Pills - Animate in after heading */}
         <div className={`flex flex-col sm:flex-row items-center justify-center gap-3 mb-12 md:mb-16 transition-all duration-1000 delay-300 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
             <Link
-              href="https://x.com/yourusername"
+              href="https://x.com/casualhermit"
               target="_blank"
               rel="noopener noreferrer"
              className="flex items-center gap-2 bg-gray-900 text-white px-3 py-2 md:px-4 rounded-full text-xs md:text-sm font-medium hover:bg-black transition-all duration-200 hover:scale-105"
@@ -398,7 +398,7 @@ export function HeroSection({ className }: HeroSectionProps) {
               X
             </Link>
             <Link
-              href="https://linkedin.com/in/yourusername"
+              href="https://www.linkedin.com/in/harsha-chaganti-079a08142/"
               target="_blank"
               rel="noopener noreferrer"
              className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 md:px-4 rounded-full text-xs md:text-sm font-medium hover:bg-blue-700 transition-all duration-200 hover:scale-105"
