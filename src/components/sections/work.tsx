@@ -44,13 +44,23 @@ const projects = [
     title: "Aimee",
     description: "AI-powered meeting notes and summaries",
     technologies: ["React Native", "AI", "Meeting", "Productivity"],
-    image: "/landings/doze_hero.png",
+    image: "/landings/aimee_hero.png",
     link: "https://aimee-jo9p.vercel.app/",
     time: "2023",
     type: "landing"
   },
   {
     id: 5,
+    title: "Doze",
+    description: "AI-powered sleep tracking and wellness app",
+    technologies: ["React Native", "AI", "Health", "Sleep"],
+    image: "/landings/doze_hero.png",
+    link: "https://doze-app.vercel.app/",
+    time: "2023",
+    type: "landing"
+  },
+  {
+    id: 6,
     title: "Spotly",
     description: "AI-powered SEO analysis for landing pages",
     technologies: ["React", "AI", "SEO", "Analytics"],
