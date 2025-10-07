@@ -32,7 +32,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeProvider
-          defaultTheme="system"
+          defaultTheme="light"
           storageKey="portfolio-theme"
         >
           {children}

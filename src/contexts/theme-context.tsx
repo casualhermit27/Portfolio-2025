@@ -24,7 +24,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
+  defaultTheme = "light",
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
@@ -37,8 +37,15 @@ export function ThemeProvider({
     const storedTheme = localStorage.getItem(storageKey) as Theme
     if (storedTheme) {
       setTheme(storedTheme)
+    } else if (defaultTheme === "system") {
+      // Only check system preference if no stored theme and default is system
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light"
+      setTheme(systemTheme)
     }
-  }, [storageKey])
+  }, [storageKey, defaultTheme])
 
   useEffect(() => {
     if (!mounted) return
