@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/cn"
+import Image from "next/image"
 import { useState, useEffect, useRef } from "react"
 
 interface WorkSectionProps {
@@ -130,7 +131,7 @@ export function WorkSection({ className }: WorkSectionProps) {
           className="bg-gray-800 dark:bg-white dark:border-2 dark:border-stone-300 rounded-full px-3 md:px-4 py-2 md:py-3 flex items-center shadow-lg relative cursor-pointer hover:scale-105 transition-transform duration-200"
         >
           {/* Inner lighter pill with project name */}
-          <div className="bg-gray-600 dark:bg-gray-100 dark:border dark:border-stone-200 rounded-full px-6 md:px-12 py-1.5 md:py-2.5 flex items-center">
+          <div className="bg-gray-600 dark:bg-gray-100 dark:border dark:border-stone-200 rounded-full px-8 md:px-16 py-1.5 md:py-2.5 flex items-center">
             <span className="text-sm md:text-base font-medium text-white dark:text-black">
               {projects[activeProject].title}
             </span>
@@ -148,7 +149,7 @@ export function WorkSection({ className }: WorkSectionProps) {
       {/* Centered Images Stacked Vertically */}
       <div className="flex justify-center">
         <div className="space-y-12 md:space-y-20 w-full max-w-6xl">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <div key={project.id} className="flex justify-center">
               <a 
                 href={project.link}
@@ -158,9 +159,11 @@ export function WorkSection({ className }: WorkSectionProps) {
                 onMouseMove={(e) => handleMouseMove(e, project.id)}
                 onMouseLeave={handleMouseLeave}
               >
-                <img
+                <Image
                   src={project.image}
                   alt={project.title}
+                  width={800}
+                  height={400}
                   className="w-full h-full object-cover"
                 />
                 

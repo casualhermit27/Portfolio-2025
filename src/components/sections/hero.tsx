@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/cn"
 import Link from "next/link"
+import Image from "next/image"
 import { useState, useEffect, useRef } from "react"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { gsap } from "gsap"
@@ -16,8 +17,11 @@ export function HeroSection({ className }: HeroSectionProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [isIntroDone, setIsIntroDone] = useState(false)
   const [showName, setShowName] = useState(false)
+  const [emailCopied, setEmailCopied] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const popupRef = useRef<HTMLDivElement>(null)
   const backdropRef = useRef<HTMLDivElement>(null)
+  const autoCloseTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   
   const originalText = "Get in Touch"
@@ -69,6 +73,7 @@ export function HeroSection({ className }: HeroSectionProps) {
     }
   }, [showAboutPopup])
 
+
   const closePopup = () => {
     if (popupRef.current && backdropRef.current) {
       // Hide backdrop immediately
@@ -89,6 +94,46 @@ export function HeroSection({ className }: HeroSectionProps) {
           setShowAboutPopup(false)
         }
       })
+    }
+  }
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText('harshachaganti12@gmail.com')
+      setEmailCopied(true)
+      setTimeout(() => setEmailCopied(false), 2000)
+    } catch (err) {
+      console.error('Failed to copy email:', err)
+    }
+  }
+
+  const handleContactClick = () => {
+    if (isExpanded) {
+      // If already expanded, close it
+      closeContactDropdown()
+    } else {
+      // Expand the button
+      setIsExpanded(true)
+      
+      // Clear any existing timeout
+      if (autoCloseTimeoutRef.current) {
+        clearTimeout(autoCloseTimeoutRef.current)
+      }
+      
+      // Set auto-close after 8 seconds
+      autoCloseTimeoutRef.current = setTimeout(() => {
+        closeContactDropdown()
+      }, 8000)
+    }
+  }
+
+  const closeContactDropdown = () => {
+    setIsExpanded(false)
+    
+    // Clear timeout
+    if (autoCloseTimeoutRef.current) {
+      clearTimeout(autoCloseTimeoutRef.current)
+      autoCloseTimeoutRef.current = null
     }
   }
 
@@ -128,20 +173,50 @@ export function HeroSection({ className }: HeroSectionProps) {
 
         {/* Hover Tooltip - Desktop Only */}
         <div className="hidden md:block absolute top-full left-0 mt-2 text-xs text-gray-400 dark:text-stone-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
-          "Empty array equals 'not empty array'? JS converts both to 0 — mind blown! 🤯"
+          &ldquo;Empty array equals &apos;not empty array&apos;? JS converts both to 0 — mind blown! 🤯&rdquo;
         </div>
       </div>
 
       {/* Top Right Controls - Always Sticky */}
       <div className={`fixed top-4 right-4 md:top-8 md:right-8 z-30 flex items-center gap-2 md:gap-3 transition-all duration-1000 ${isLoading ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-         <Link
-           href="#contact"
-          className="text-sm md:text-base font-medium text-muted-foreground dark:text-stone-300 hover:text-foreground dark:hover:text-stone-100 transition-colors duration-200 border-2 border-dotted border-gray-400 hover:border-gray-600 px-3 py-2 md:px-6 md:py-3 rounded-xl md:rounded-2xl hover:bg-muted/50"
+         <button
+           onClick={handleContactClick}
+           className={`text-sm md:text-base font-medium text-muted-foreground dark:text-stone-300 hover:text-foreground dark:hover:text-stone-100 transition-all duration-500 ease-out border-2 border-dotted border-gray-400 hover:border-gray-600 rounded-xl md:rounded-2xl hover:bg-muted/50 ${
+             isExpanded 
+               ? 'px-6 py-4 md:px-8 md:py-5' 
+               : 'px-3 py-2 md:px-6 md:py-3'
+           }`}
            onMouseEnter={handleMouseEnter}
            onMouseLeave={handleMouseLeave}
          >
+           {isExpanded ? (
+             <div className="flex items-center gap-4 transition-all duration-500 ease-out">
+               <div className="flex items-center gap-2 transition-all duration-500 ease-out">
+                 <svg className="w-4 h-4 text-gray-600 dark:text-stone-400 transition-all duration-500 ease-out" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                 </svg>
+                 <span className="text-sm text-gray-600 dark:text-stone-300 transition-all duration-500 ease-out">harshachaganti12@gmail.com</span>
+               </div>
+               <div
+                 onClick={(e) => {
+                   e.stopPropagation()
+                   copyEmail()
+                 }}
+                 className={`px-3 py-1 rounded-lg text-xs font-medium transition-all duration-300 ease-out cursor-pointer select-none ${
+                   emailCopied 
+                     ? 'bg-green-500 text-white' 
+                     : 'bg-gray-200 dark:bg-stone-700 text-gray-700 dark:text-stone-200 hover:bg-gray-300 dark:hover:bg-stone-600'
+                 }`}
+               >
+                 {emailCopied ? 'Copied!' : 'Copy'}
+               </div>
+             </div>
+           ) : (
+             <span className="transition-all duration-500 ease-out">
            {renderText()}
-         </Link>
+             </span>
+           )}
+         </button>
          <ThemeToggle />
        </div>
 
@@ -221,23 +296,29 @@ export function HeroSection({ className }: HeroSectionProps) {
                     </h3>
                     <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
                       <div className="flex-shrink-0 w-24 h-24 bg-white dark:bg-gray-800/30 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden">
-                        <img
+                        <Image
                           src="/logos/Eevolution logo.png"
                           alt="Eevolution"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-shrink-0 w-24 h-24 bg-white dark:bg-gray-800/30 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden">
-                        <img
+                        <Image
                           src="/logos/acme health logo.png"
                           alt="Acme Health"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="flex-shrink-0 w-24 h-24 bg-white dark:bg-gray-800/30 border border-stone-200 dark:border-stone-700 rounded-lg overflow-hidden">
-                        <img
+                        <Image
                           src="/logos/spotly logo.png"
                           alt="Spotly"
+                          width={96}
+                          height={96}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -288,7 +369,7 @@ export function HeroSection({ className }: HeroSectionProps) {
         >
             <span className="inline-block">
               <span className={`transition-all duration-500 ease-out ${showName ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-                Hey, I&apos;m <span className="font-medium">Harsha</span>
+                Hey, I&apos;m <span className="font-medium cursive-name">Harsha</span>
                 <span className="inline-block ml-2 animate-wave">👋</span>
               </span>
               {!isIntroDone ? (
@@ -413,6 +494,19 @@ export function HeroSection({ className }: HeroSectionProps) {
             transform: scale(1);
             box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
           }
+        }
+
+        .cursive-name {
+          font-family: var(--font-cedarville), 'Brush Script MT', cursive;
+          font-weight: 400;
+          font-style: normal;
+          color: #000000;
+          font-size: 0.8em;
+          letter-spacing: 0.5px;
+        }
+
+        .dark .cursive-name {
+          color: #ffffff;
         }
       `}</style>
     </section>
